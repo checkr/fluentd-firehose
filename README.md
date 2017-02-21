@@ -22,7 +22,7 @@ ORG=checkr FLUENTD_VERSION=0.14.12 make build push
 
 ### Deploy as Daemonset to Kubernetes
 ```
-ORG=checkr FLUENTD_VERSION=0.14.12 deploy
+ORG=checkr FLUENTD_VERSION=0.14.12 make deploy
 ```
 
 ### Update existing deployment
