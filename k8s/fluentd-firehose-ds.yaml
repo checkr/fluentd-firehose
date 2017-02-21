@@ -1,0 +1,82 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: fluentd-firehose-v0.14.12
+  labels:
+    k8s-app: fluentd-firehose
+    kubernetes.io/cluster-service: "true"
+    version: v0.14.12
+spec:
+  template:
+    metadata:
+      namespace: kube-system
+      labels:
+        k8s-app: fluentd-firehose
+        kubernetes.io/cluster-service: "true"
+        version: v0.14.12
+    spec:
+      imagePullSecrets:
+        - name: docker-io
+      containers:
+      - name: fluentd-firehose
+        image: checkr/fluentd-firehose:0.14.12
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 1024Mi
+            cpu: 1000m
+          requests:
+            memory: 512Mi
+            cpu: 512m
+        volumeMounts:
+          - name: var-log
+            mountPath: /var/log
+          - name: var-log-journal
+            mountPath: /var/log/journal
+            readOnly: true
+          - name: var-lib-docker-containers
+            mountPath: /var/lib/docker/containers
+            readOnly: true
+          - name: var-log-containers
+            mountPath: /var/log/containers
+            readOnly: true
+        env:
+          - name: AWS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: fluentd-firehose
+                key: aws-key-id
+          - name: AWS_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: fluentd-firehose
+                key: aws-secret-key
+          - name: AWS_REGION
+            valueFrom:
+              secretKeyRef:
+                name: fluentd-firehose
+                key: aws-region
+          - name: FIREHOSE_STREAM_NAME_KUBERNETES
+            valueFrom:
+              secretKeyRef:
+                name: fluentd-firehose
+                key: firehose-stream-name-kubernetes
+          - name: FIREHOSE_STREAM_NAME_SYSTEMD
+            valueFrom:
+              secretKeyRef:
+                name: fluentd-firehose
+                key: firehose-stream-name-systemd
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: var-log
+        hostPath:
+          path: /var/log
+      - name: var-log-journal
+        hostPath:
+          path: /var/log/journal
+      - name: var-lib-docker-containers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: var-log-containers
+        hostPath:
+          path: /var/log/containers
