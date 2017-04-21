@@ -1,11 +1,11 @@
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: fluentd-firehose-v0.14.12
+  name: fluentd-firehose-v0.14.14
   labels:
     k8s-app: fluentd-firehose
     kubernetes.io/cluster-service: "true"
-    version: v0.14.12
+    version: v0.14.14
 spec:
   template:
     metadata:
@@ -13,8 +13,12 @@ spec:
       labels:
         k8s-app: fluentd-firehose
         kubernetes.io/cluster-service: "true"
-        version: v0.14.12
+        version: v0.14.14
     spec:
+      tolerations:
+      - effect: NoSchedule
+        key: node.alpha.kubernetes.io/role
+        value: master
       imagePullSecrets:
         - name: docker-io
       containers:
