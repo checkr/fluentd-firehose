@@ -1,5 +1,5 @@
 ORG ?= checkr
-FLUENTD_VERSION ?= 0.14.14
+FLUENTD_VERSION ?= 0.14.17
 
 .PHONY:	build
 build:
